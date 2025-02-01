@@ -181,7 +181,7 @@ export class Polygon {
         return { x: minx, y: miny, w: maxx - minx, h: maxy - miny };
     }
 
-    getClosestPointTo(point):Vector {
+    getClosestPointTo(point) {
 
         // Normalize the input point
         point = _normalizePoint(point);
@@ -366,6 +366,17 @@ export class NavMesh {
         from = _normalizePoint(from);
         to = _normalizePoint(to);
 
+        let fromPoly = this._findContainingPolygon(from);
+        let toPoly = this._findContainingPolygon(to);
+
+        if (fromPoly === null){
+            from = this.findClosestPointInPolygons(from);
+        }
+
+        if (toPoly === null){
+            to = this.findClosestPointInPolygons(to);
+        }
+
         const path = this._findPath(from, to);
         return path && this._funnel(from, to, path);
     }
@@ -379,7 +390,7 @@ export class NavMesh {
             let candidatePoint = poly.getClosestPointTo(point);
 
             const distance = point.sub(candidatePoint).length();
-            if (distance < minDistance) {
+            if (distance < minDistance && this._findContainingPolygon(candidatePoint)!==null && distance!==0) {
                 minDistance = distance;
                 closestPoint = candidatePoint;
             }
