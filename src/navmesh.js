@@ -4,7 +4,7 @@ import earcut from "earcut";
 import QuadTree from "simple-quadtree";
 import TinyQueue from "tinyqueue";
 
-import { Vector, isclose, cross, dot } from "./math.js";
+import { cross, dot, isclose, Vector } from "./math.js";
 
 function _normalizePoint(point) {
     if (point instanceof Array) {
@@ -180,6 +180,57 @@ export class Polygon {
         const [minx, miny, maxx, maxy] = this.bounds;
         return { x: minx, y: miny, w: maxx - minx, h: maxy - miny };
     }
+
+    getClosestPointTo(point):Vector {
+
+        // Normalize the input point
+        point = _normalizePoint(point);
+
+        // Initialize variables for tracking the closest point and its distance
+        let closestPoint = null;
+        let shortestDistance = Infinity;
+
+        // Iterate through all edges of the polygon
+        for (const edge of this.edges()) {
+            // Implementing closestPoint method for the edge
+            const edgeDirection = edge.direction();
+            const edgeLengthSquared = edgeDirection.length() ** 2;
+
+            if (edgeLengthSquared === 0) {
+                // Edge is a point
+                const candidatePoint = edge.p1;
+                const distance = point.sub(candidatePoint).length();
+
+                if (distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestPoint = candidatePoint;
+                }
+                continue;
+            }
+
+            const t = Math.max(
+                0,
+                Math.min(
+                    1,
+                    dot(point.sub(edge.p1), edgeDirection) / edgeLengthSquared,
+                ),
+            );
+
+            const candidatePoint = edge.p1.add(edgeDirection.mul(t));
+
+            // Calculate the distance from the input point to the candidate point
+            const distance = point.sub(candidatePoint).length();
+
+            // If this distance is shorter than the currently tracked shortest distance, update
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                closestPoint = candidatePoint;
+            }
+        }
+
+        // Return the closest point found
+        return closestPoint;
+    }
 }
 
 export class NavMesh {
@@ -319,12 +370,37 @@ export class NavMesh {
         return path && this._funnel(from, to, path);
     }
 
+    findClosestPointInPolygons(point) {
+
+        let closestPoint = null;
+        let minDistance = Infinity;
+
+        for (const poly of this.polygons) {
+            let candidatePoint = poly.getClosestPointTo(point);
+
+            const distance = point.sub(candidatePoint).length();
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = candidatePoint;
+            }
+        }
+        return closestPoint;
+    }
+
     _findPath(from, to) {
         // This is the A* algorithm
-        const fromPoly = this._findContainingPolygon(from);
-        const toPoly = this._findContainingPolygon(to);
+        let fromPoly = this._findContainingPolygon(from);
+        let toPoly = this._findContainingPolygon(to);
 
-        if (fromPoly === null || toPoly === null) return null;
+        if (fromPoly === null){
+            from = this.findClosestPointInPolygons(from);
+            fromPoly = this._findContainingPolygon(from);
+        }
+
+        if (toPoly === null){
+            to = this.findClosestPointInPolygons(to);
+            toPoly = this._findContainingPolygon(to);
+        }
 
         const frontier = new TinyQueue(
             [{ cost: 0, polygon: fromPoly }],

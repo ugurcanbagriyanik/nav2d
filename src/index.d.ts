@@ -2,6 +2,8 @@ declare module "nav2d" {
     export class Vector {
         constructor(x: number, y: number);
 
+        x: number;
+        y: number;
         add(other: Vector | number): Vector;
         sub(other: Vector | number): Vector;
         mul(other: Vector | number): Vector;
@@ -46,6 +48,7 @@ declare module "nav2d" {
         onEdge(point: Point): Edge | null;
         touches(otherEdge: Edge): Edge | null;
         boundsSize(): [number, number, number, number];
+        getClosestPointTo(point: Vector): Vector;
     }
 
     export class NavMesh {
@@ -53,11 +56,11 @@ declare module "nav2d" {
 
         polygons: Polygon[];
         pointQuerySize: number;
-
+        findClosestPointInPolygons(point:Vector): Vector;
         findPath(from: Point, to: Point): Point[] | null;
     }
 
-    export type Point = Vector | [number, number] | { x: number, y: number };
+    export type Point = Vector;
     export interface NavMeshOptions {
         triangulate?: boolean;
         pointQuerySize?: number;
