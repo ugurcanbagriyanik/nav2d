@@ -384,6 +384,7 @@ export class NavMesh {
                 closestPoint = candidatePoint;
             }
         }
+        console.log("closestPoint", closestPoint);
         return closestPoint;
     }
 
