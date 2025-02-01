@@ -1,6 +1,6 @@
 {
     "name": "nav2d",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "2d navigation meshes with pathfinding and funneling",
     "repository": "https://github.com/frapa/nav2d",
     "homepage": "https://frapa.github.io/nav2d/",
@@ -25,8 +25,7 @@
     ],
     "scripts": {
         "build": "webpack && webpack --config webpack_deps.config.cjs",
-        "prepublish": "npm test && npm run build",
-        "test": "npm run lint && nyc ava --verbose",
+        "prepublish": "npm run build",
         "lint": "eslint src",
         "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
     },

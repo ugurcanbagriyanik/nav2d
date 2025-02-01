@@ -60,7 +60,7 @@ declare module "nav2d" {
         findPath(from: Point, to: Point): Point[] | null;
     }
 
-    export type Point = Vector;
+    export type Point = Vector | [number, number] | { x: number, y: number };
     export interface NavMeshOptions {
         triangulate?: boolean;
         pointQuerySize?: number;
