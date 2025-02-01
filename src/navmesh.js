@@ -181,7 +181,7 @@ export class Polygon {
         return { x: minx, y: miny, w: maxx - minx, h: maxy - miny };
     }
 
-    getClosestPointTo(point):Vector {
+    getClosestPointTo(point){
 
         // Normalize the input point
         point = _normalizePoint(point);
