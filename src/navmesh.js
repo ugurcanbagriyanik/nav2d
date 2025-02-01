@@ -402,6 +402,12 @@ export class NavMesh {
             toPoly = this._findContainingPolygon(to);
         }
 
+        if (fromPoly === null || toPoly === null) {
+            console.log("fromPoly", fromPoly);
+            console.log("toPoly", toPoly);
+            return null;
+        }
+
         const frontier = new TinyQueue(
             [{ cost: 0, polygon: fromPoly }],
             (a, b) => a.cost - b.cost
