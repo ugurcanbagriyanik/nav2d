@@ -25,34 +25,6 @@ module.exports = {
         ],
     },
     externals: {
-        uuid: {
-            root: "uuid",
-            amd: "uuid",
-            umd: "uuid",
-            commonjs2: "uuid",
-            commonjs: "uuid",
-        },
-        "point-in-polygon": {
-            root: "point-in-polygon",
-            amd: "point-in-polygon",
-            umd: "point-in-polygon",
-            commonjs2: "point-in-polygon",
-            commonjs: "point-in-polygon",
-        },
-        earcut: {
-            root: "earcut",
-            amd: "earcut",
-            umd: "earcut",
-            commonjs2: "earcut",
-            commonjs: "earcut",
-        },
-        "simple-quadtree": {
-            root: "simple-quadtree",
-            amd: "simple-quadtree",
-            umd: "simple-quadtree",
-            commonjs2: "simple-quadtree",
-            commonjs: "simple-quadtree",
-        },
     },
     devtool: "source-map",
 };
